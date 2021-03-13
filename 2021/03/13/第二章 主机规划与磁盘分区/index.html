@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="2.1 Linux与硬件的搭配安装Linux之前应该先确定想达成什么目的。例如：桌面电脑的使用者使用时，应该会用到X Window系统，此时对显卡和内存就有一定的要求，如果想作文件服务器，那么对硬盘和其他存储设备就有一定的要求。 2.1.1 认识计算机的硬件设备游戏机&#x2F;工作机的考虑游戏机建议直接windows，Linux几乎没法玩游戏。工作机的话只是跑跑office和浏览器，入门级的配置就够了 “">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章 主机规划与磁盘分区">
+<meta property="og:url" content="http://example.com/2021/03/13/%E7%AC%AC%E4%BA%8C%E7%AB%A0%20%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92%E4%B8%8E%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA/index.html">
+<meta property="og:site_name" content="我的学习记录">
+<meta property="og:description" content="2.1 Linux与硬件的搭配安装Linux之前应该先确定想达成什么目的。例如：桌面电脑的使用者使用时，应该会用到X Window系统，此时对显卡和内存就有一定的要求，如果想作文件服务器，那么对硬盘和其他存储设备就有一定的要求。 2.1.1 认识计算机的硬件设备游戏机&#x2F;工作机的考虑游戏机建议直接windows，Linux几乎没法玩游戏。工作机的话只是跑跑office和浏览器，入门级的配置就够了 “">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-13T05:11:35.633Z">
+<meta property="article:modified_time" content="2021-03-13T05:13:41.799Z">
+<meta property="article:author" content="DIO酱的面包哒">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/03/13/%E7%AC%AC%E4%BA%8C%E7%AB%A0%20%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92%E4%B8%8E%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>第二章 主机规划与磁盘分区 | 我的学习记录</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我的学习记录</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/13/%E7%AC%AC%E4%BA%8C%E7%AB%A0%20%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92%E4%B8%8E%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="DIO酱的面包哒">
+      <meta itemprop="description" content="收藏与学习">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我的学习记录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第二章 主机规划与磁盘分区
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-13 13:11:35 / 修改时间：13:13:41" itemprop="dateCreated datePublished" datetime="2021-03-13T13:11:35+08:00">2021-03-13</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="2-1-Linux与硬件的搭配"><a href="#2-1-Linux与硬件的搭配" class="headerlink" title="2.1 Linux与硬件的搭配"></a>2.1 Linux与硬件的搭配</h2><p>安装Linux之前应该先确定想达成什么目的。例如：桌面电脑的使用者使用时，应该会用到X Window系统，此时对显卡和内存就有一定的要求，如果想作文件服务器，那么对硬盘和其他存储设备就有一定的要求。</p>
+<h3 id="2-1-1-认识计算机的硬件设备"><a href="#2-1-1-认识计算机的硬件设备" class="headerlink" title="2.1.1 认识计算机的硬件设备"></a>2.1.1 认识计算机的硬件设备</h3><h4 id="游戏机-工作机的考虑"><a href="#游戏机-工作机的考虑" class="headerlink" title="游戏机/工作机的考虑"></a>游戏机/工作机的考虑</h4><p>游戏机建议直接windows，Linux几乎没法玩游戏。<br>工作机的话只是跑跑office和浏览器，入门级的配置就够了</p>
+<h4 id="“性能-价格”比与“性能-消耗的瓦数”比的考虑"><a href="#“性能-价格”比与“性能-消耗的瓦数”比的考虑" class="headerlink" title="“性能/价格”比与“性能/消耗的瓦数”比的考虑"></a>“性能/价格”比与“性能/消耗的瓦数”比的考虑</h4><p>如果一个产品让你花费了多一倍的钱，但性能只提升了10%，那么这个性能/价格的比值太低，就不建议升级。</p>
+<p>如果买来做服务器，那么就要考虑功耗，因为服务器一年365天都在运行。假如机器功耗为50W，那么每年的电费就是0.05W*365天*24小时=438度。一度电一块钱的话，一年也需要400多块钱。</p>
+<h4 id="支持度的考虑"><a href="#支持度的考虑" class="headerlink" title="支持度的考虑"></a>支持度的考虑</h4><p>并不是所有硬件都支持Linux，所以购买的时候要调查清楚硬件是否指出Linux</p>
+<h4 id="2-1-2-选择与Linux搭配的主机设备"><a href="#2-1-2-选择与Linux搭配的主机设备" class="headerlink" title="2.1.2 选择与Linux搭配的主机设备"></a>2.1.2 选择与Linux搭配的主机设备</h4><p>如果是用老旧设备来运行Linux，可能会导致运行过程中出现死机等情况。（除非真的是上古世纪留下来的传家宝，只要能装上，一般都没什么问题）</p>
+<ul>
+<li>CPU：只要能支持系统，不会死机就行。现在 i5 系列用着就不错</li>
+<li>RAM：内存当然是越大越好，一般小型服务器512MB就够用了。如果想使用X window，那就1G起步。</li>
+<li>Hard Disk：一般小型服务器20GB就够用了，大型公司就使用磁盘阵列（RAID）模式了。</li>
+<li>VGA：对于不要X Window的服务器来说，显卡一点都不重要。如果使用X window系统时，建议32MB以上的显存容量。</li>
+<li>Network Interface Card：目前大多主板都集成了以太网卡。一般都不用担心。</li>
+<li>光盘、软盘、键盘与鼠标：这些东西有就行了</li>
+</ul>
+<h3 id="2-1-3-各硬件设备在Linux中的文件名"><a href="#2-1-3-各硬件设备在Linux中的文件名" class="headerlink" title="2.1.3 各硬件设备在Linux中的文件名"></a>2.1.3 各硬件设备在Linux中的文件名</h3><p>在Linux中，一切皆文件。<br>| 设备              | 设备在Linux内的文件名                                        |<br>| —————– | ———————————————————— |<br>| SCSI/SATA\USB硬盘 | /dev/sd[a-p]                                                 |<br>| USB闪存盘         | /dev/sd[a-p]（与SATA相同）                                   |<br>| VirtI/O界面       | /dev/vd[a-p]（用于虚拟机内）                                 |<br>| 软键机            | /dev/fd[0-7]                                                 |<br>| 打印机            | /dev/lp[0-2] （25针打印机） /dev/usb/lp[0-15]（USB接口）     |<br>| 鼠标              | /dev/input/mouse[0-15]<br />/dev/psaux (PS/2界面)<br />/dev/mouse （当前鼠标） |<br>| CDROM/DVDROM      | /dev/scd[0-1]（通用）<br />/dev/sr[0-1] （通用，CentOS较常见）<br />/dev/cdrom （当前CDROM） |<br>| 磁带机            | /dev/ht0 （IDE界面）<br />/dev/st0 （SATA/SCSI界面）<br />/dev/tape （当前磁带） |<br>| IDE硬盘机         | /dev/hd[a-d] （旧式系统才有）                                |</p>
+<p>IDE界面已经被淘汰了，就算有也被仿真成了<code>/dev/sd[a-p]</code><br>虚拟机内的仿真器产生的文件名是<code>/dev/vd[a-p]</code></p>
+<h3 id="2-1-4使用虚拟机学习"><a href="#2-1-4使用虚拟机学习" class="headerlink" title="2.1.4使用虚拟机学习"></a>2.1.4使用虚拟机学习</h3><p>在初期的学习阶段，建议使用虚拟机练习。推荐使用VMware[<a target="_blank" rel="noopener" href="https://www.vmware.com/]">https://www.vmware.com/]</a></p>
+<h2 id="2-2-磁盘分区"><a href="#2-2-磁盘分区" class="headerlink" title="2.2 磁盘分区"></a>2.2 磁盘分区</h2><p>Windows下使用的是磁盘分区，如：C：D：E：等等。</p>
+<h3 id="2-2-1-磁盘连接的方式与设备文件名的关系"><a href="#2-2-1-磁盘连接的方式与设备文件名的关系" class="headerlink" title="2.2.1 磁盘连接的方式与设备文件名的关系"></a>2.2.1 磁盘连接的方式与设备文件名的关系</h3><p>正常的实体机器大概使用的都是<code>/dev/sd[a-]</code>的磁盘文件名，至于虚拟机环境下面，为了加速，可能就会使用<code>/dev/vd[a-p]</code>这种设备文件名。</p>
+<p>磁盘盘片上面可以细分出扇区（Sector）与磁道（Track）两种单位，其中扇区的物理设计有两种，分别是512Bytes与4KBytes。</p>
+<p>其中，第一个扇区里面含有的重要信息称为MBR（Master Boot Record）格式，但是由于最近磁盘的容量不断扩大，因此后来又多了一种新的磁盘分区格式，称为GPT（GUID partition table）。</p>
+<h3 id="MSDOS（MBR）与GPT磁盘分区表（partition-table）"><a href="#MSDOS（MBR）与GPT磁盘分区表（partition-table）" class="headerlink" title="MSDOS（MBR）与GPT磁盘分区表（partition table）"></a>MSDOS（MBR）与GPT磁盘分区表（partition table）</h3><h4 id="MSDOS-（MBR）-分区表格式与限制"><a href="#MSDOS-（MBR）-分区表格式与限制" class="headerlink" title="MSDOS （MBR） 分区表格式与限制"></a>MSDOS （MBR） 分区表格式与限制</h4><p>早期的Linux系统为了相容于Windows的磁盘，因此使用的是支持Windows的MBR（Master Boot Record， 主要开机记录区）的方式来处理开机管理程序与分区表。而开机管理程序记录区与分区表则通通方在磁盘的第一个扇区，这个扇区通常是512Bytes的大小，第一个扇区会有一下两个数据：</p>
+<ul>
+<li>主要开机记录区（Master Boot Record，MBR）：可以安装开机管理程序的地方，有466Bytes。</li>
+<li>分区表（Partition table）：记录整颗硬盘分区的状态，有64Bytes。</li>
+</ul>
+<p>由于分区表所在区块仅有64 Bytes容量，因此最多仅能有四组记录区，每组记录区记录了该区段的启始与结束的柱面号码。</p>
+<p>由于分区表只有64Bytes，只能容纳四笔分区记录，这四个分区的记录被称为主要（Primary）或延展（Extended）分区：</p>
+<ul>
+<li>其实所谓的“分区”只是针对那个64 Bytes的分区表进行设置而已！</li>
+<li>硬盘默认的分区表只能写入四组分区信息。</li>
+<li>这四组分区信息我们称为主要（Primary）或延伸（Extended）分区</li>
+<li>分区的最小单位“通常”为柱面（cylinder）</li>
+<li>当系统要写入磁盘时，一定会参考磁盘分区表，才能针对某个分区进行数据处理。</li>
+</ul>
+<p>为什么要分区；</p>
+<ul>
+<li>数据的安全性：每个分区的数据是独立的，假如你要重装系统时，只会还原C盘的数据，D盘的资料完全不会有影响。所以重装系统时可以将重要的资料备份到D盘。</li>
+<li>系统的性能考虑：磁盘的数据在不同的柱面上，将分区1-100号分成一个区，那么在搜索的时候，只用搜索1-100就够了，可以节省时间与性能。</li>
+</ul>
+<p>虽然分区表只能记录四组数据，但这不代表硬盘只能分四个区。我们可以利用额外扇区进行记录，延伸分区的目的是使用额外的扇区来记录分区信息，延伸分区本身并不能被拿来格式化。</p>
+<ul>
+<li>主要分区与延伸分区最多可以有四笔（硬盘的限制）</li>
+<li>延伸分区最多只能有一个（操作系统的限制）</li>
+<li>逻辑分区是由延伸分区持续切割出来的分区；</li>
+<li>能够被格式化后，作为数据存取的分区为主要分区与逻辑分区。延伸分区无法格式化；</li>
+<li>逻辑分区的数量依操作系统而不同，在Linux系统中SATA硬盘已经可以突破63个以上的分区限制</li>
+</ul>
+<p>MBR分区表有以下限制：</p>
+<ul>
+<li>操作系统无法抓取到2.2T以上的磁盘容量！</li>
+<li>MBR仅有一个分区块，若被破坏后，经常无法或很难救援。</li>
+<li>MBR内的存放开机管理程序的区块仅446Bytes，无法容纳较多的程序码。</li>
+</ul>
+<h4 id="GUID-partition-table-GPT磁盘分区表"><a href="#GUID-partition-table-GPT磁盘分区表" class="headerlink" title="GUID partition table, GPT磁盘分区表"></a>GUID partition table, GPT磁盘分区表</h4><p>为了相容于所有的磁盘，因此在扇区的定义上面， 大多会使用所谓的逻辑区块位址（Logical Block Address, LBA）来处理。GPT 将磁盘所有区块以此 LBA（默认为 512Bytes 喔！） 来规划，而第一个 LBA 称为 LBA0 （从 0 开始编号）。</p>
+<ul>
+<li>LBA0 (MBR相容区块)：与 MBR 模式相似的，这个相容区块也分为两个部份，一个就是跟之前 446 Bytes 相似的区块，储存了第一阶段的开机管理程序！ 而在原本的分区表的纪录区内，这个相容模式仅放入一个特殊标志的分区，用来表示此磁盘为 GPT 格式之意。而不懂 GPT 分区表的磁盘管理程序， 就不会认识这颗磁盘，除非用户有特别要求要处理这颗磁盘，否则该管理软件不能修改此分区信息，进一步保护了此磁盘</li>
+<li>LBA1 （GPT 表头纪录）：这个部份纪录了分区表本身的位置与大小，同时纪录了备份用的 GPT 分区 （就是前面谈到的在最后 34 个 LBA 区块） 放置的位置， 同时放置了分区表的检验机制码 （CRC32），操作系统可以根据这个检验码来判断 GPT 是否正确。若有错误，还可以通过这个纪录区来取得备份的 GPT（磁盘最后的那个备份区块） 来恢复 GPT 的正常运行！</li>
+<li>LBA2-33 （实际纪录分区信息处）：从 LBA2 区块开始，每个 LBA 都可以纪录 4 笔分区纪录，所以在默认的情况下，总共可以有 4*32 = 128 笔分区纪录喔！因为每个 LBA 有 512Bytes，因此每笔纪录用到 128 Bytes 的空间，除了每笔纪录所需要的识别码与相关的纪录之外，GPT 在每笔纪录中分别提供了 64bits 来记载开始/结束的扇区号码，因此，GPT 分区表对於单一分区来说， 他的最大容量限制就会在“ 264 * 512Bytes = 263 * 1KBytes = 233*TB = 8 ZB ”，要注意 1ZB = 230TB 啦！ </li>
+</ul>
+<p>现在 GPT 分区默认可以提供多达 128 笔纪录，而在 Linux 本身的核心设备纪录中，针对单一磁盘来说，虽然过去最多只能到达 15 个分区，不过由于 Linux kernel 通过 udev 等方式的处理，现在 Linux 也已经没有这个限制在了！ 此外，GPT 分区已经没有所谓的主、延伸、逻辑分区的概念，既然每笔纪录都可以独立存在， 当然每个都可以视为是主分区！每一个分区都可以拿来格式化使用喔！</p>
+<h3 id="2-2-3-开机流程中的BIOS与UEFI开机检测程序"><a href="#2-2-3-开机流程中的BIOS与UEFI开机检测程序" class="headerlink" title="2.2.3 开机流程中的BIOS与UEFI开机检测程序"></a>2.2.3 开机流程中的BIOS与UEFI开机检测程序</h3><h4 id="BIOS搭配MBR-GPT的开机流程"><a href="#BIOS搭配MBR-GPT的开机流程" class="headerlink" title="BIOS搭配MBR/GPT的开机流程"></a>BIOS搭配MBR/GPT的开机流程</h4><p>CMOS是记录各项硬件参数且嵌入在主板上面的储存器，BIOS则是一个写入到主板上的一个固件（再次说明， 固件就是写入到硬件上的一个软件程序）。这个BIOS就是在开机的时候，计算机系统会主动执行的第一个程序了！</p>
+<p>BIOS会读取硬盘里第一个扇区MBR的位置，MBR里会存放电脑的开机管理程序。这个开机管理程序的目的就是载入（load）核心文件。</p>
+<p>简单来是，整个开机流程就是:</p>
+<ol>
+<li>BIOS：开机主动执行的固件，会认识第一个可开机的设备；</li>
+<li>MBR：第一个可开机设备的第一个扇区的主要开机记录区块，内含开机管理程序；</li>
+<li>开机管理程序（boot loader）：一支可读取核心文件夹的执行的软件；</li>
+<li>核心文件：开始操作系统的功能。</li>
+</ol>
+<p>boot loader的主要任务有下面这些：</p>
+<ul>
+<li>提供菜单：使用者可以选择不同的开机项目，这也是多重开机的重要功能。</li>
+<li>载入核心文件：直接指向开机程序的程序区段来开始操作系统；</li>
+<li>转交其他loader：将开机管理功能转交给其他loader负责。</li>
+</ul>
+<p>多重开机的工作流程：</p>
+<ul>
+<li>每个分区都有自己的开机扇区（boot sector）</li>
+<li>系统盘为第一分区，第二分区</li>
+<li>实际可开机的核心文件是放置到各个分区内的</li>
+<li>loader只会然是自己的系统盘内的可开机核心文件，以及其他loader而已</li>
+<li>loader可直接指向或者是间接将管理管理权交给另一个管理程序</li>
+</ul>
+<h4 id="UEFI-BIOS-搭配GPT开机的流程"><a href="#UEFI-BIOS-搭配GPT开机的流程" class="headerlink" title="UEFI BIOS 搭配GPT开机的流程"></a>UEFI BIOS 搭配GPT开机的流程</h4><p>UEFI（Unified Extensible Firmware Interface）</p>
+<p>UEFI使用C语言编写，比其使用汇编语言的传统BIOS更容易开发，</p>
+<table>
+<thead>
+<tr>
+<th align="center">比较项目</th>
+<th align="center">传统 BIOS</th>
+<th align="center">UEFI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">使用程序语言</td>
+<td align="center">组合语言</td>
+<td align="center">C 语言</td>
+</tr>
+<tr>
+<td align="center">硬件资源控制</td>
+<td align="center">使用中断 （IRQ） 管理<br/>不可变的内存存取<br/>不可变得输入/输出存取</td>
+<td align="center">使用驱动程序与协定</td>
+</tr>
+<tr>
+<td align="center">处理器运行环境</td>
+<td align="center">16 位</td>
+<td align="center">CPU 保护模式</td>
+</tr>
+<tr>
+<td align="center">扩充方式</td>
+<td align="center">通过 IRQ 链接</td>
+<td align="center">直接载入驱动程序</td>
+</tr>
+<tr>
+<td align="center">第三方厂商支持</td>
+<td align="center">较差</td>
+<td align="center">较佳且可支持多平台</td>
+</tr>
+<tr>
+<td align="center">图形化能力</td>
+<td align="center">较差</td>
+<td align="center">较佳</td>
+</tr>
+<tr>
+<td align="center">内置简化操作系统前环境</td>
+<td align="center">不支持</td>
+<td align="center">支持</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-4-Linux安装模式下，磁盘的选择"><a href="#2-2-4-Linux安装模式下，磁盘的选择" class="headerlink" title="2.2.4 Linux安装模式下，磁盘的选择"></a>2.2.4 Linux安装模式下，磁盘的选择</h3><h4 id="目录树结构（directory-tree）"><a href="#目录树结构（directory-tree）" class="headerlink" title="目录树结构（directory tree）"></a>目录树结构（directory tree）</h4><p>Linux是以文件的形态来呈现的，所以Linux系统最主要的就是在于目录树架构。所谓的目录树架构就是（directory tree）就是以根目录为主，然后向下呈现分支状的目录结构的一种文件架构。 所以，整个目录树架构最重要的就是那个根目录（root directory），这个根目录的表示方法为一条斜线“/”。</p>
+<h4 id="文件系统与目录树的关系（挂载）"><a href="#文件系统与目录树的关系（挂载）" class="headerlink" title="文件系统与目录树的关系（挂载）"></a>文件系统与目录树的关系（挂载）</h4><p>所谓的“挂载”就是利用一个目录当成进入点，将磁盘分区的数据放置在该目录下； 也就是说，进入该目录就可以读取该分区的意思。</p>
+<h4 id="distributions安装时，挂载点与磁盘分区的规划："><a href="#distributions安装时，挂载点与磁盘分区的规划：" class="headerlink" title="distributions安装时，挂载点与磁盘分区的规划："></a>distributions安装时，挂载点与磁盘分区的规划：</h4><ul>
+<li>自定义安装“Custom”：Linux安装时提供了相当多的默认模式供你选择安装，但强烈建议自定义安装。这样就不怕分区错误无法安装的困境。<strong>初次接触Linux：只要分区“/”及“swap”即可</strong></li>
+<li><strong>分区的时候，建议预留一个备用的剩余磁盘容量</strong>、</li>
+</ul>
+<h2 id="2-3-安装Linux前的规划"><a href="#2-3-安装Linux前的规划" class="headerlink" title="2.3 安装Linux前的规划"></a>2.3 安装Linux前的规划</h2><h3 id="2-3-1-选择适当的distribution"><a href="#2-3-1-选择适当的distribution" class="headerlink" title="2.3.1 选择适当的distribution"></a>2.3.1 选择适当的distribution</h3><p>推荐免费的CentOS，下载网站：</p>
+<ul>
+<li><ul>
+<li>国家高速网络中心：[<a target="_blank" rel="noopener" href="http://ftp.twaren.net/Linux/CentOS/7/isos/]">http://ftp.twaren.net/Linux/CentOS/7/isos/]</a><br>昆山科技大学：[<a target="_blank" rel="noopener" href="http://ftp.ksu.edu.tw/FTP/Linux/CentOS/7/isos/]">http://ftp.ksu.edu.tw/FTP/Linux/CentOS/7/isos/]</a></li>
+</ul>
+</li>
+<li>CentOS官方网站：[<a target="_blank" rel="noopener" href="http://mirror.centos.org/centos/7/isos/]">http://mirror.centos.org/centos/7/isos/]</a></li>
+</ul>
+<h3 id="2-3-2-主机的服务规划与硬件的关系"><a href="#2-3-2-主机的服务规划与硬件的关系" class="headerlink" title="2.3.2 主机的服务规划与硬件的关系"></a>2.3.2 主机的服务规划与硬件的关系</h3><ul>
+<li>多重开机，Windows与Linux共存的环境</li>
+<li>NAT（达成IP分享器的功能）</li>
+<li>SAMBA（加入Windows网络邻居）</li>
+<li>Mail（邮件服务器）</li>
+<li>Web（www服务器）</li>
+<li>DHCP（提供用户自动取得IP的功能）</li>
+<li>FTP</li>
+</ul>
+<h3 id="2-3-3-主机硬盘的主要规划"><a href="#2-3-3-主机硬盘的主要规划" class="headerlink" title="2.3.3 主机硬盘的主要规划"></a>2.3.3 主机硬盘的主要规划</h3><ul>
+<li>最简单的分区方法：只分出根目录和交换分区（/ &amp; swap）</li>
+<li>稍微麻烦一点的方式：<ul>
+<li>/boot</li>
+<li>/</li>
+<li>home</li>
+<li>/var</li>
+<li>swap</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-4-重点回顾"><a href="#2-4-重点回顾" class="headerlink" title="2.4 重点回顾"></a>2.4 重点回顾</h2><ul>
+<li>新添购计算机硬件配备时，需要考虑的角度有“游戏机/工作机”、“性能/价格比”、“性能/消耗瓦数”、“支持度”等；</li>
+<li>旧的硬件配件可能由于保存的问题或是电子零件老化的问题，导致计算机系统非常容易在运行过程中出现不明的死机情况</li>
+<li>Red Hat的硬件支持：[<a target="_blank" rel="noopener" href="https://hardware.redhat.com/?pagename=hc%5D">https://hardware.redhat.com/?pagename=hc]</a></li>
+<li>在Linux系统中，每个设备都被当成一个文件来对待，每个设备都会有设备文件名。</li>
+<li>磁盘设备文件名通常分为两种，实际SATA/USB设备文件名为/dev/sd[a-p]，而虚拟机的设备可能为/dev/vd[a-p]</li>
+<li>磁盘的第一个扇区主要记录了重要的信息，分别是：(1)主要开机记录区（Master Boot Record，MBR）：可以安装开机管理程序的地方，有446Bytes（2）分区表（partition table）：记录整颗硬盘分区的状态，有64Bytes；</li>
+<li>磁盘的MBR分区分区方式中，主要与延展分区最多可以有四个，逻辑分区的设备文件名号码，一定有5号开始；</li>
+<li>如果磁盘容量大于2TB以上时，系统会自动使用GPT分区方式来处理磁盘分区。</li>
+<li>GPT分区已经没有延展与逻辑分区的概念，你可以想象成所有分区都是主分区！</li>
+<li>某些错做系统要使用GPT分区时，必须要搭配UEFI的新型BIOS格式才能安装使用。</li>
+<li>开机的流程由：BIOS–&gt;MBR–&gt;boot loader–&gt;核心文件；</li>
+<li>boot loader的功能主要有：提供菜单、载入核心、转交控制权给其他loader</li>
+<li>boot loader可以安装的地点有两个，分别时MBR与Boot sector</li>
+<li>Linux操作系统的文件使用目录树系统，与磁盘的对应需要有“挂载”的动作才行；</li>
+<li>新手的简单分区，建议只要有/及swap两个分区即可</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/07/%E7%AC%AC%E4%B8%80%E7%AB%A0%20Linux%E6%98%AF%E4%BB%80%E4%B9%88%E5%A6%82%E4%BD%95%E5%AD%A6%E4%B9%A0/" rel="prev" title="第一章 Linux是什么与如何学习">
+      <i class="fa fa-chevron-left"></i> 第一章 Linux是什么与如何学习
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux%E4%B8%8E%E7%A1%AC%E4%BB%B6%E7%9A%84%E6%90%AD%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux与硬件的搭配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E8%AE%A4%E8%AF%86%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E8%AE%BE%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text">2.1.1 认识计算机的硬件设备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%B8%E6%88%8F%E6%9C%BA-%E5%B7%A5%E4%BD%9C%E6%9C%BA%E7%9A%84%E8%80%83%E8%99%91"><span class="nav-number">1.1.1.</span> <span class="nav-text">游戏机&#x2F;工作机的考虑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%80%9C%E6%80%A7%E8%83%BD-%E4%BB%B7%E6%A0%BC%E2%80%9D%E6%AF%94%E4%B8%8E%E2%80%9C%E6%80%A7%E8%83%BD-%E6%B6%88%E8%80%97%E7%9A%84%E7%93%A6%E6%95%B0%E2%80%9D%E6%AF%94%E7%9A%84%E8%80%83%E8%99%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">“性能&#x2F;价格”比与“性能&#x2F;消耗的瓦数”比的考虑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E5%BA%A6%E7%9A%84%E8%80%83%E8%99%91"><span class="nav-number">1.1.3.</span> <span class="nav-text">支持度的考虑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-%E9%80%89%E6%8B%A9%E4%B8%8ELinux%E6%90%AD%E9%85%8D%E7%9A%84%E4%B8%BB%E6%9C%BA%E8%AE%BE%E5%A4%87"><span class="nav-number">1.1.4.</span> <span class="nav-text">2.1.2 选择与Linux搭配的主机设备</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-%E5%90%84%E7%A1%AC%E4%BB%B6%E8%AE%BE%E5%A4%87%E5%9C%A8Linux%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-number">1.2.</span> <span class="nav-text">2.1.3 各硬件设备在Linux中的文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.3.</span> <span class="nav-text">2.1.4使用虚拟机学习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA"><span class="nav-number">2.</span> <span class="nav-text">2.2 磁盘分区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E7%A3%81%E7%9B%98%E8%BF%9E%E6%8E%A5%E7%9A%84%E6%96%B9%E5%BC%8F%E4%B8%8E%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.1.</span> <span class="nav-text">2.2.1 磁盘连接的方式与设备文件名的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MSDOS%EF%BC%88MBR%EF%BC%89%E4%B8%8EGPT%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E8%A1%A8%EF%BC%88partition-table%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">MSDOS（MBR）与GPT磁盘分区表（partition table）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MSDOS-%EF%BC%88MBR%EF%BC%89-%E5%88%86%E5%8C%BA%E8%A1%A8%E6%A0%BC%E5%BC%8F%E4%B8%8E%E9%99%90%E5%88%B6"><span class="nav-number">2.2.1.</span> <span class="nav-text">MSDOS （MBR） 分区表格式与限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GUID-partition-table-GPT%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">GUID partition table, GPT磁盘分区表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-%E5%BC%80%E6%9C%BA%E6%B5%81%E7%A8%8B%E4%B8%AD%E7%9A%84BIOS%E4%B8%8EUEFI%E5%BC%80%E6%9C%BA%E6%A3%80%E6%B5%8B%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.3.</span> <span class="nav-text">2.2.3 开机流程中的BIOS与UEFI开机检测程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BIOS%E6%90%AD%E9%85%8DMBR-GPT%E7%9A%84%E5%BC%80%E6%9C%BA%E6%B5%81%E7%A8%8B"><span class="nav-number">2.3.1.</span> <span class="nav-text">BIOS搭配MBR&#x2F;GPT的开机流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UEFI-BIOS-%E6%90%AD%E9%85%8DGPT%E5%BC%80%E6%9C%BA%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">2.3.2.</span> <span class="nav-text">UEFI BIOS 搭配GPT开机的流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-Linux%E5%AE%89%E8%A3%85%E6%A8%A1%E5%BC%8F%E4%B8%8B%EF%BC%8C%E7%A3%81%E7%9B%98%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">2.4.</span> <span class="nav-text">2.2.4 Linux安装模式下，磁盘的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E6%A0%91%E7%BB%93%E6%9E%84%EF%BC%88directory-tree%EF%BC%89"><span class="nav-number">2.4.1.</span> <span class="nav-text">目录树结构（directory tree）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%9B%AE%E5%BD%95%E6%A0%91%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%88%E6%8C%82%E8%BD%BD%EF%BC%89"><span class="nav-number">2.4.2.</span> <span class="nav-text">文件系统与目录树的关系（挂载）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distributions%E5%AE%89%E8%A3%85%E6%97%B6%EF%BC%8C%E6%8C%82%E8%BD%BD%E7%82%B9%E4%B8%8E%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E7%9A%84%E8%A7%84%E5%88%92%EF%BC%9A"><span class="nav-number">2.4.3.</span> <span class="nav-text">distributions安装时，挂载点与磁盘分区的规划：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%AE%89%E8%A3%85Linux%E5%89%8D%E7%9A%84%E8%A7%84%E5%88%92"><span class="nav-number">3.</span> <span class="nav-text">2.3 安装Linux前的规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-%E9%80%89%E6%8B%A9%E9%80%82%E5%BD%93%E7%9A%84distribution"><span class="nav-number">3.1.</span> <span class="nav-text">2.3.1 选择适当的distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-%E4%B8%BB%E6%9C%BA%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%A7%84%E5%88%92%E4%B8%8E%E7%A1%AC%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.</span> <span class="nav-text">2.3.2 主机的服务规划与硬件的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-%E4%B8%BB%E6%9C%BA%E7%A1%AC%E7%9B%98%E7%9A%84%E4%B8%BB%E8%A6%81%E8%A7%84%E5%88%92"><span class="nav-number">3.3.</span> <span class="nav-text">2.3.3 主机硬盘的主要规划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E9%87%8D%E7%82%B9%E5%9B%9E%E9%A1%BE"><span class="nav-number">4.</span> <span class="nav-text">2.4 重点回顾</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">DIO酱的面包哒</p>
+  <div class="site-description" itemprop="description">收藏与学习</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DIO酱的面包哒</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
